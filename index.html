@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<canvas id="myCanvas"> 
+Your browser does not support the canvas element. 
+</canvas> 
+
+<style> 
+html, body { 
+	width:  100%; 
+	height: 100%; 
+	margin: 0px; 
+	overflow: hidden; 
+} 
+</style> 
+
+<script src="js/helper.js"></script>
+<script src="js/model.js"></script>
+<script src="js/minimap-view.js"></script>
+<script src="js/firstperson-view.js"></script>
+<script src="js/controller.js"></script>
+<script>
+
+// Canvas Stuff
+var canvas = document.getElementById("myCanvas"); 
+canvas.width = window.innerWidth; 
+canvas.height = window.innerHeight; 
+var context = canvas.getContext("2d");
+
+
+// // Model, View
+var theModel = new Model();
+var theView = new ViewFirstPerson(theModel, new Rectangle(0, 0, canvas.width, canvas.height));
+
+// Game Loop
+function render()
+{
+	canvas.width = window.innerWidth; 
+	canvas.height = window.innerHeight; 
+	theView.resize();
+
+	context.fillStyle="#201F1D";
+	context.fillRect(0, 0, canvas.width, canvas.height);
+
+	theView.render();
+}
+
+var renderLooper = setInterval(render, 1000/60);
+
+function changeFPS(fps)
+{
+	clearInterval(renderLooper);
+	renderLooper = setInterval(render, 1000/fps);
+}
+
+function physicsStep()
+{
+	theModel.update(timeStep);
+}
+
+var timeStep = 1/60;
+var physicsLooper = setInterval(physicsStep, 1000/60);
+
+function changeTimeStep(newTimeStep)
+{
+	timeStep = newTimeStep;
+	clearInterval(physicsLooper);
+	physicsLooper = setInterval(physicsStep, 1000 * timeStep);
+}
+
+
+// Controls
+window.addEventListener('keydown', keydownHandler, false);
+window.addEventListener('keyup', keyupHandler, false);
+
+function keydownHandler(key){
+	var keynum = window.event ? key.keyCode : key.which; // window.event = userIsIE
+	ControllerManager.prototype.instance.keydownHandler(String.fromCharCode(keynum));
+}
+
+function keyupHandler(key){
+	var keynum = window.event ? key.keyCode : key.which; // window.event = userIsIE
+	ControllerManager.prototype.instance.keyupHandler(String.fromCharCode(keynum));
+}
+
+</script>
