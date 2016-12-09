@@ -4,4 +4,5 @@ This is a Javascript implementation of raycasting, used to display a 3d represen
 
 ## Try it
 
+Controls: WASD for movement, F and C turn right and left.
 http://artlessavian.github.io/raycast-engine-js

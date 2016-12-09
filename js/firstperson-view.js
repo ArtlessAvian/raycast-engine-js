@@ -47,7 +47,7 @@ ViewFirstPerson.prototype.render = function()
 	{
 		var deltaTheta = (i - this.subdivisions/2 + 1/2) * -this.fov/this.subdivisions;
 
-		var distance = this.raycastEntity(this.model.entities[this.entityID], deltaTheta); // distance
+		var distance = this.model.entities[this.entityID].raycastEntity(deltaTheta); // distance
 		if (distance == Infinity)
 		{
 			continue;
@@ -70,60 +70,5 @@ ViewFirstPerson.prototype.render = function()
 	// context.restore();
 }
 
-ViewFirstPerson.prototype.raycastEntity = function(entity, deltaTheta)
-{
-	return this.raycastRoom(entity.room, entity.pos, entity.theta + deltaTheta)
-}
 
-ViewFirstPerson.prototype.raycastRoom = function(aRoom, aPos, theta)
-{
-	var minimum = Infinity;
-	var minimumWall = null;
-	for (var wall of aRoom.walls)
-	{
-		var temp = Math.min(minimum, this.raycast(wall, aPos, theta));
-		if (temp < minimum)
-		{
-			minimum = temp;
-			minimumWall = wall;
-			context.fillStyle = wall.color;
-		}
-	}
 
-	if (wall.portal == null)
-	{
-		return minimum;
-	}
-	else
-	{
-		var other = wall.getOther(aRoom);
-		if (other == null)
-		{
-			return minimum;
-		}
-		return this.raycastRoom(other, aPos, theta);
-	}
-}
-
-ViewFirstPerson.prototype.raycast = function(aWall, aPos, theta)
-{
-	if (aWall.translate(aPos) < 0)
-	{
-		// if (Math.random() < 0.005)
-		// {
-		// 	console.log("aaa " + aWall.translate(aPos));
-		// }
-		return Infinity;
-	}
-
-	if (angleDistance(theta,aWall.normal) < Math.PI/2)
-	{
-		// if (Math.random() < 0.005)
-		// {
-		// 	console.log("bbb " + angleDistance(theta,aWall.normal));
-		// }
-		return Infinity;
-	}
-
-	return aWall.translate(aPos)/Math.cos(theta - aWall.normal - Math.PI);
-}

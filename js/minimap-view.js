@@ -1,8 +1,10 @@
 function ViewMinimap(r)
 {
 	this.bounds = r;
-	this.unitLength = 10; // in pixels
+	this.unitLength = 30; // in pixels
 	this.blipSize = 4; // in pixels
+
+	this.blips = [];
 }
 
 ViewMinimap.prototype.resize = function()
@@ -33,6 +35,13 @@ ViewMinimap.prototype.render = function(aModel, anEntity)
 	context.fillStyle="#FF0000";
 	this.fillRectWrap(anEntity,0,0);
 
+	for (var i = 0; i < this.blips.length; i += 2)
+	{
+		this.fillRectWrap(anEntity, this.blips[i], this.blips[i+1]);
+	}
+
+	this.blips = [];
+
 	context.restore();
 }
 
@@ -46,17 +55,18 @@ ViewMinimap.prototype.drawRoom = function(anEntity, aRoom)
 
 ViewMinimap.prototype.drawWall = function(anEntity, aWall)
 {
-	var x = -Math.cos(aWall.normal) * aWall.distance;
-	var y = -Math.sin(aWall.normal) * aWall.distance;
-
 	context.strokeStyle = aWall.color;
+	context.fillStyle = aWall.color;
 	context.beginPath();
-	this.moveToWrap(anEntity, x + Math.cos(aWall.normal + Math.PI/2) * 400, y + Math.sin(aWall.normal + Math.PI/2) * 400);
-	this.lineToWrap(anEntity, x - Math.cos(aWall.normal + Math.PI/2) * 400, y - Math.sin(aWall.normal + Math.PI/2) * 400);
+	this.moveToWrap(anEntity, aWall.ax, aWall.ay);
+	this.lineToWrap(anEntity, aWall.bx, aWall.by);
 	context.stroke();
+
+	this.fillRectWrap(anEntity, aWall.ax, aWall.ay);
+	this.fillRectWrap(anEntity, aWall.bx, aWall.by);
 }
 
-ViewMinimap.prototype.fillRectWrap = function(anEntity, x, y, w, h)
+ViewMinimap.prototype.fillRectWrap = function(anEntity, x, y)
 {
 	var xOffset = this.bounds.x + this.bounds.width/2;
 	var yOffset = this.bounds.y + this.bounds.height/2;
