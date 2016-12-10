@@ -8,6 +8,7 @@ function ViewFirstPerson(model, r)
 	//this.subdivisions = 1;
 	this.setRectangleWidth(20);
 	this.fov = Math.PI/3;
+	this.fisheye = false;
 	this.near = 500; // px height 1 world unit away
 
 	this.entityID = 0;
@@ -47,13 +48,17 @@ ViewFirstPerson.prototype.render = function()
 	{
 		var deltaTheta = (i - this.subdivisions/2 + 1/2) * -this.fov/this.subdivisions;
 
-		var distance = this.model.entities[this.entityID].raycastEntity(deltaTheta); // distance
+		var distances = this.model.entities[this.entityID].raycastEntity(deltaTheta); // distance
+		var distance = distances[0]
 		if (distance == Infinity)
 		{
 			continue;
 		}
 
-		distance *= Math.cos(deltaTheta); // remove fisheye
+		if (!this.fisheye)
+		{
+			distance *= Math.cos(deltaTheta); // remove fisheye
+		}
 		height = this.near/distance; // distance is inversely proportional to size (if distance is 1, height is this.near)
 
 		context.fillRect(this.bounds.x + i * delta - 1, this.bounds.height/2 - height/2, delta + 2, height);

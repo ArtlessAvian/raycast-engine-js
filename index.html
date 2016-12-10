@@ -13,10 +13,15 @@ html, body {
 } 
 </style> 
 
-<script src="js/helper.js"></script>
+<script src="js/geom-primitives.js"></script>
+<script src="js/space.js"></script>
+<script src="js/entity.js"></script>
 <script src="js/model.js"></script>
+
+<script src="js/messagebox.js"></script>
 <script src="js/minimap-view.js"></script>
 <script src="js/firstperson-view.js"></script>
+
 <script src="js/controller.js"></script>
 <script>
 
@@ -30,6 +35,7 @@ var context = canvas.getContext("2d");
 // // Model, View
 var theModel = new Model();
 var theView = new ViewFirstPerson(theModel, new Rectangle(0, 0, canvas.width, canvas.height));
+var messages = new MessageBox(new Rectangle(canvas.width - 450, 50, 400, 200));
 
 // Game Loop
 function render()
@@ -37,11 +43,13 @@ function render()
 	canvas.width = window.innerWidth; 
 	canvas.height = window.innerHeight; 
 	theView.resize();
+	messages.resize();
 
 	context.fillStyle="#201F1D";
 	context.fillRect(0, 0, canvas.width, canvas.height);
 
 	theView.render();
+	messages.render();
 }
 
 var renderLooper = setInterval(render, 1000/60);

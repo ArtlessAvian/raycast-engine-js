@@ -19,13 +19,12 @@ ViewMinimap.prototype.render = function(aModel, anEntity)
 	context.rect(this.bounds.x, this.bounds.y, this.bounds.width, this.bounds.height);
 	context.clip();
 
-	context.fillStyle="#009900";
+	context.fillStyle="#00CC00";
 	context.fillRect(this.bounds.x, this.bounds.y, this.bounds.width, this.bounds.height);
+	context.fillStyle="#002200";
+	context.fillRect(this.bounds.x+10, this.bounds.y+10, this.bounds.width-20, this.bounds.height-20);
 
-	for (var room of aModel.rooms)
-	{
-		this.drawRoom(anEntity, room);
-	}
+	this.drawSpace(anEntity, aModel.space);
 
 	context.beginPath();
 	this.moveToWrap(anEntity, anEntity.pos.x + Math.cos(anEntity.theta), anEntity.pos.y + Math.sin(anEntity.theta));
@@ -35,6 +34,17 @@ ViewMinimap.prototype.render = function(aModel, anEntity)
 	context.fillStyle="#FF0000";
 	this.fillRectWrap(anEntity,0,0);
 
+	for (var i = -Math.PI/6; i <= Math.PI/6; i += Math.PI/36)
+	{
+		var ray = anEntity.raycastEntity(i);
+		for (var dst of ray)
+		{
+			this.blips.push(anEntity.pos.x + dst * Math.cos(anEntity.theta + i));
+			this.blips.push(anEntity.pos.y + dst * Math.sin(anEntity.theta + i));
+		}
+	}
+
+	context.fillStyle="#FF0000";
 	for (var i = 0; i < this.blips.length; i += 2)
 	{
 		this.fillRectWrap(anEntity, this.blips[i], this.blips[i+1]);
@@ -43,6 +53,14 @@ ViewMinimap.prototype.render = function(aModel, anEntity)
 	this.blips = [];
 
 	context.restore();
+}
+
+ViewMinimap.prototype.drawSpace = function(anEntity, aSpace)
+{
+	for (var room of aSpace.rooms)
+	{
+		this.drawRoom(anEntity, room);
+	}
 }
 
 ViewMinimap.prototype.drawRoom = function(anEntity, aRoom)
@@ -57,6 +75,20 @@ ViewMinimap.prototype.drawWall = function(anEntity, aWall)
 {
 	context.strokeStyle = aWall.color;
 	context.fillStyle = aWall.color;
+
+	// draw infinite ish
+	context.globalAlpha = 0.5;
+	var x = -Math.cos(aWall.normal) * aWall.distance;
+	var y = -Math.sin(aWall.normal) * aWall.distance;
+
+	context.beginPath();
+	this.moveToWrap(anEntity, x + Math.cos(aWall.normal + Math.PI/2) * 400, y + Math.sin(aWall.normal + Math.PI/2) * 400);
+	this.lineToWrap(anEntity, x - Math.cos(aWall.normal + Math.PI/2) * 400, y - Math.sin(aWall.normal + Math.PI/2) * 400);
+	context.stroke();
+
+	context.globalAlpha = 1;
+
+	// draw line segment
 	context.beginPath();
 	this.moveToWrap(anEntity, aWall.ax, aWall.ay);
 	this.lineToWrap(anEntity, aWall.bx, aWall.by);

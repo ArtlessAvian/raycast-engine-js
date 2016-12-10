@@ -9,6 +9,8 @@ function angleDistance(a, b)
 	return Math.abs(thing);
 }
 
+burnerVec = new Vec2D(0,0);
+
 function Vec2D(x, y)
 {
 	this.x = x;
@@ -20,6 +22,8 @@ Vec2D.prototype.set = function(x, y)
 	this.x = x;
 	this.y = y;
 }
+
+// Mutators
 
 Vec2D.prototype.add = function(x, y)
 {
@@ -38,6 +42,16 @@ Vec2D.prototype.scl = function(a)
 	this.x *= a;
 	this.y *= a;
 }
+
+Vec2D.prototype.rotate = function(theta)
+{
+	var oldX = this.x;
+
+	this.x = this.x * Math.cos(theta) - this.y * Math.sin(theta);
+	this.y =  oldX  * Math.sin(theta) + this.y * Math.cos(theta);
+}
+
+// Getters
 
 Vec2D.prototype.dst = function()
 {
