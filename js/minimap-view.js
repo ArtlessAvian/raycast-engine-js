@@ -1,15 +1,16 @@
-function ViewMinimap(r)
+function ViewMinimap()
 {
-	this.bounds = r;
+	this.bounds = new Rectangle(0,0,0,0);
 	this.unitLength = 30; // in pixels
 	this.blipSize = 4; // in pixels
 
 	this.blips = [];
 }
 
-ViewMinimap.prototype.resize = function()
+ViewMinimap.prototype.resize = function(r)
 {
 	// TODO
+	this.bounds.set(r.x + 50, r.y + 50, 200, 200);
 }
 
 ViewMinimap.prototype.render = function(aModel, anEntity)
@@ -34,15 +35,15 @@ ViewMinimap.prototype.render = function(aModel, anEntity)
 	context.fillStyle="#FF0000";
 	this.fillRectWrap(anEntity,0,0);
 
-	for (var i = -Math.PI/6; i <= Math.PI/6; i += Math.PI/36)
-	{
-		var ray = anEntity.raycastEntity(i);
-		for (var dst of ray)
-		{
-			this.blips.push(anEntity.pos.x + dst * Math.cos(anEntity.theta + i));
-			this.blips.push(anEntity.pos.y + dst * Math.sin(anEntity.theta + i));
-		}
-	}
+	// for (var i = -Math.PI/6; i <= Math.PI/6; i += Math.PI/36)
+	// {
+	// 	var ray = anEntity.raycastEntity(i);
+	// 	for (var dst of ray)
+	// 	{
+	// 		this.blips.push(anEntity.pos.x + dst * Math.cos(anEntity.theta + i));
+	// 		this.blips.push(anEntity.pos.y + dst * Math.sin(anEntity.theta + i));
+	// 	}
+	// }
 
 	context.fillStyle="#FF0000";
 	for (var i = 0; i < this.blips.length; i += 2)

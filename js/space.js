@@ -112,7 +112,7 @@ Wall.prototype.raycast = function(aPos, aRoom, theta)
 		return Infinity;
 	}
 
-	if (angleDistance(theta, this.getNormal(aRoom)) < Math.PI/2)
+	if (angleDistance(theta, this.getNormal(aRoom)) <= Math.PI/2)
 	{
 		// if (Math.random() < 0.005)
 		// {

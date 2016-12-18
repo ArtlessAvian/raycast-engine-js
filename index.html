@@ -32,23 +32,22 @@ canvas.height = window.innerHeight;
 var context = canvas.getContext("2d");
 
 
-// // Model, View
+// Model, View
+var theView = new Array();
 var theModel = new Model();
-var theView = new ViewFirstPerson(theModel, new Rectangle(0, 0, canvas.width, canvas.height));
+
 var messages = new MessageBox(new Rectangle(canvas.width - 450, 50, 400, 200));
 
 // Game Loop
 function render()
 {
-	canvas.width = window.innerWidth; 
-	canvas.height = window.innerHeight; 
-	theView.resize();
-	messages.resize();
-
 	context.fillStyle="#201F1D";
 	context.fillRect(0, 0, canvas.width, canvas.height);
 
-	theView.render();
+	for (var aView of theView)
+	{
+		aView.render();
+	}
 	messages.render();
 }
 
@@ -73,6 +72,25 @@ function changeTimeStep(newTimeStep)
 	timeStep = newTimeStep;
 	clearInterval(physicsLooper);
 	physicsLooper = setInterval(physicsStep, 1000 * timeStep);
+}
+
+
+// Events
+
+// Resizing
+window.addEventListener("resize", resizeHandler, false);
+
+function resizeHandler()
+{
+	console.log("Resizing");
+
+	canvas.width = window.innerWidth; 
+	canvas.height = window.innerHeight; 
+
+	for (var i = 0; i < theView.length; i++)
+	{
+		theView[i].resize(i, theView.length);
+	}
 }
 
 

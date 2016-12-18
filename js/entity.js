@@ -27,6 +27,13 @@ Entity.prototype.addControls = function()
 	this.controller.bind("D", "strafeRight");
 }
 
+Entity.prototype.addView = function()
+{
+	this.view = new ViewFirstPerson(theModel, this);
+	theView.push(this.view);
+	resizeHandler();
+}
+
 Entity.prototype.doMovement = function(timeStep)
 {
 	this.oldPos.set(this.pos.x, this.pos.y);
